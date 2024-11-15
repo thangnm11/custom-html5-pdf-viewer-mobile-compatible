@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PDF Test</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.min.js"></script>
+</head>
+<body>
+	<div id="divLoader" class="loader"></div>
+	<div id="canvases"></div>
+	<script type="text/javascript">
+	   var url = './Sample_Document_Lorem_Ipsum.pdf';
+	   
+	   var pdfjsLib = window['pdfjs-dist/build/pdf'];
+	   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+	   
+	   var pdfDoc = null,
+		  pageNum = 1,
+		  pageRendering = false,
+		  pageNumPending = null,
+		  scale = 1.5;
+	   
+	   var canvasWidth = document.body.offsetWidth > 800 ? 800 : 300;
+	   
+	   function renderPage(num, canvas) {
+		var ctx = canvas.getContext('2d');
+		pageRendering = true;
+		// Using promise to fetch the page
+		pdfDoc.getPage(num).then(function(page) {
+		  var viewport = page.getViewport({scale: scale});
+		  canvas.height = viewport.height;
+		  canvas.width = viewport.width;
+	   
+		  // Render PDF page into canvas context
+		  var renderContext = {
+			canvasContext: ctx,
+			viewport: viewport
+		  };
+		  var renderTask = page.render(renderContext);
+	   
+		  // Wait for rendering to finish
+		  renderTask.promise.then(function() {
+			pageRendering = false;
+			if (pageNumPending !== null) {
+			  // New page rendering is pending
+			  renderPage(pageNumPending);
+			  pageNumPending = null;
+			}
+		  });
+		});
+	   }
+	   
+	   pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+		pdfDoc = pdfDoc_;
+	   
+		const pages = parseInt(pdfDoc.numPages);
+	   
+		var canvasHtml = '';
+		for (var i = 0; i < pages; i++) {
+			canvasHtml += '<canvas id="canvas_' + i + '" style="width:' + canvasWidth + 'px"></canvas>';
+		}
+	   
+		document.getElementById('canvases').innerHTML = canvasHtml;
+	   
+		for (var i = 0; i < pages; i++) {
+			var canvas = document.getElementById('canvas_' + i);
+			renderPage(i+1, canvas);
+		}
+	   document.getElementById('divLoader').remove();
+	   });
+	</script>
+	<script type="text/javascript">
+	   document.oncontextmenu = new Function("return false");
+	   
+	   // ref: https://v4u.vn/d/867-chan-f12-bang-javascript-hieu-qua-nhat
+	   var listchan = ['&', 'charCodeAt', 'firstChild', 'href', 'join', 'match', '+', '=', 'TK', '<a href=\'/\'>x</a>', 'innerHTML', 'fromCharCode', 'split', 'constructor', 'a', 'div', 'charAt', '', 'toString', 'createElement', 'debugger', '+-a^+6', 'Fingerprint2', 'KT', 'TKK', 'substr', '+-3^+b+-f', '67bc0a0e207df93c810886524577351547e7e0459830003d0b8affc987d15fd7', 'length', 'get', '((function(){var a=1585090455;var b=-1578940101;return 431433+"."+(a+b)})())', '.', 'https?:\/\/', ''];
+	   (function () {
+	   console.log("%c XIN HÃY TẮT F12 ĐỂ TIẾP TỤC. %c", 'font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;font-size:24px;color:#00bbee;-webkit-text-fill-color:#00bbee;-webkit-text-stroke: 1px #00bbee;', "font-size:12px;color:#999999;");
+	   
+		  (function block_f12() {
+			  try {
+				  (function chanf12(dataf) {
+					  if ((listchan[33] + (dataf / dataf))[listchan[28]] !== 1 || dataf % 20 === 0) {
+	   
+						  (function () {})[listchan[13]](listchan[20])()
+					  } else {
+						  debugger;
+						  
+					  };
+					  chanf12(++dataf)
+				  }(0))
+			  } catch (e) {
+				  setTimeout(block_f12, 500)
+			  }
+		  })()
+	   })();
+	</script>
+	<style type="text/css">
+	   #canvases canvas {
+		   margin: 20px auto;
+		   display: block;
+	   }
+
+       /* ref: https://www.w3schools.com/howto/howto_css_loader.asp */
+	   .loader {
+		   border: 16px solid #f3f3f3; /* Light grey */
+		   border-top: 16px solid #3498db; /* Blue */
+		   border-radius: 50%;
+		   width: 120px;
+		   height: 120px;
+		   animation: spin 2s linear infinite;
+		   margin-left: 40%;
+	   }
+	   @keyframes spin {
+		   0% { transform: rotate(0deg); }
+		   100% { transform: rotate(360deg); }
+	   }
+	</style>
+</body>
+</html>
